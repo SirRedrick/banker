@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { getExchangeRate } from './api/nbu.api';
 
 export default function App() {
   const [date, setDate] = React.useState('2022-06-19');
@@ -10,12 +11,9 @@ export default function App() {
     if (match) {
       const [, year, month, day] = match;
 
-      fetch(
-        `https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?date=${year}${month}${day}&json`
-      )
-        .then((data) => data.json())
-        .then((data) => data.find((item: any) => item.cc === 'USD'))
-        .then((item: any) => setUsd(item.rate));
+      getExchangeRate({ valcode: 'USD', date: `${year}${month}${day}` }).then(([usdData]) =>
+        setUsd(usdData.rate)
+      );
     }
   }, [date]);
 
